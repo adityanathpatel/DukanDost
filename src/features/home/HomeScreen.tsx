@@ -20,6 +20,8 @@ import { ProductWithSales } from '@/data/sampleProducts';
 import { StockMovement } from '@/domain/types';
 import { calculateReorder } from '@/domain/reorder';
 import { getStockStatus, getSlowMovingStatus } from '@/domain/stock';
+import { generateWhatsAppOrderMessage, triggerWhatsAppShare } from '@/domain/whatsapp';
+import { useAuth } from '@/features/auth';
 
 interface HomeScreenProps {
   products: ProductWithSales[];
@@ -42,6 +44,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenOCR,
   onOpenVoice,
 }) => {
+  const { storeName } = useAuth();
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(3);
   const [copiedWhatsAppToast, setCopiedWhatsAppToast] = useState(false);
 
@@ -95,22 +98,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const totalUrgent = reorderList.length;
 
   const handleWhatsAppShare = () => {
-    const header = language === 'hi' 
-      ? `*दुकान रीऑर्डर सूची (Sharma Kirana)*\nदिनांक: 21 Oct\n\n`
-      : `*Dukaan Reorder List (Sharma Kirana)*\nDate: 21 Oct\n\n`;
+    const items = reorderList.map(({ product, calculation }) => ({
+      name: language === 'hi' ? product.nameHi || product.name : product.name,
+      reorderQuantity: calculation.reorderQuantity,
+      unit: product.unit,
+      currentStock: product.stockQty,
+    }));
 
-    const itemsText = reorderList
-      .map(({ product, calculation }) => {
-        const name = language === 'hi' ? product.nameHi || product.name : product.name;
-        return `• ${name}: *${calculation.reorderQuantity} ${product.unit}* (मौजूदा: ${product.stockQty})`;
-      })
-      .join('\n');
+    const message = generateWhatsAppOrderMessage({
+      storeName: storeName || (language === 'hi' ? 'शर्मा किराना स्टोर' : 'Sharma Kirana Store'),
+      language,
+      items,
+    });
 
-    const fullMessage = `${header}${itemsText}\n\nकृपया जल्द भेजें। धन्यवाद!`;
-
-    navigator.clipboard?.writeText(fullMessage);
+    triggerWhatsAppShare(message);
     setCopiedWhatsAppToast(true);
-    setTimeout(() => setCopiedWhatsAppToast(false), 3000);
+    setTimeout(() => setCopiedWhatsAppToast(false), 4000);
   };
 
   return (
@@ -122,8 +125,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <Check className="w-5 h-5" />
             <span>
               {language === 'hi' 
-                ? 'रीऑर्डर लिस्ट कॉपी हो गई! WhatsApp पर सप्लायर को पेस्ट करें।' 
-                : 'Reorder list copied! Paste into WhatsApp for your distributor.'}
+                ? 'WhatsApp खुल रहा है और रीऑर्डर लिस्ट कॉपी हो गई है!' 
+                : 'Opening WhatsApp & reorder list copied to clipboard!'}
             </span>
           </div>
         </div>

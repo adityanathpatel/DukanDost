@@ -1,10 +1,12 @@
-import React from 'react';
-import { AlertCircle, Clock, ArrowUpRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { AlertCircle, Clock, ArrowUpRight, MessageCircle, Check } from 'lucide-react';
 import { ProductWithSales } from '@/data/sampleProducts';
 import { StockMovement } from '@/domain/types';
 import { calculateReorder } from '@/domain/reorder';
 import { getSlowMovingStatus } from '@/domain/stock';
 import { ForecastCard } from '@/ai/forecasting/ForecastCard';
+import { generateWhatsAppOrderMessage, triggerWhatsAppShare } from '@/domain/whatsapp';
+import { useAuth } from '@/features/auth';
 
 interface ReportsScreenProps {
   products: ProductWithSales[];
@@ -19,6 +21,9 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = ({
   language,
   onReorderClick,
 }) => {
+  const { storeName } = useAuth();
+  const [copiedToast, setCopiedToast] = useState(false);
+
   // Compute reorder suggestions
   const reorderItems = products
     .map((p) => {
@@ -49,8 +54,39 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = ({
     })
     .filter((item) => item.status.isSlowMoving);
 
+  const handleWhatsAppShare = () => {
+    const items = reorderItems.map(({ product, calculation }) => ({
+      name: language === 'hi' ? product.nameHi || product.name : product.name,
+      reorderQuantity: calculation.reorderQuantity,
+      unit: product.unit,
+      currentStock: product.stockQty,
+    }));
+
+    const message = generateWhatsAppOrderMessage({
+      storeName: storeName || (language === 'hi' ? 'शर्मा किराना स्टोर' : 'Sharma Kirana Store'),
+      language,
+      items,
+    });
+
+    triggerWhatsAppShare(message);
+    setCopiedToast(true);
+    setTimeout(() => setCopiedToast(false), 4000);
+  };
+
   return (
     <div className="space-y-6 pb-28 pt-2">
+      {/* Toast Feedback */}
+      {copiedToast && (
+        <div className="bg-emerald-600 text-white text-xs font-black px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2 animate-fadeIn">
+          <Check className="w-5 h-5 flex-shrink-0" />
+          <span>
+            {language === 'hi'
+              ? 'WhatsApp खुल रहा है और रीऑर्डर लिस्ट कॉपी हो गई है!'
+              : 'Opening WhatsApp & reorder sheet copied!'}
+          </span>
+        </div>
+      )}
+
       {/* Title */}
       <div>
         <h2 className="text-xl font-black text-ink">
@@ -73,14 +109,26 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = ({
 
       {/* Reorder Suggestions Section */}
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           <h3 className="text-sm font-black text-ink flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-pastel-orange-text" />
             {language === 'hi' ? 'मंगाने योग्य सामान (Reorder Sheet)' : 'Recommended for Reorder'}
           </h3>
-          <span className="text-xs font-bold text-slate-400">
-            {reorderItems.length} {language === 'hi' ? 'आइटम' : 'items'}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-slate-400">
+              {reorderItems.length} {language === 'hi' ? 'आइटम' : 'items'}
+            </span>
+            {reorderItems.length > 0 && (
+              <button
+                onClick={handleWhatsAppShare}
+                className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-black flex items-center gap-1.5 border border-emerald-200 shadow-2xs transition-all active:scale-95"
+                title="Share on WhatsApp"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{language === 'hi' ? 'WhatsApp पर भेजें' : 'Share on WhatsApp'}</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {reorderItems.length === 0 ? (
