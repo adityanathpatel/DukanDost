@@ -1,5 +1,5 @@
 import React from 'react';
-import { Store, Globe, Search, WifiOff, Home, LayoutGrid, BarChart2, User, Cloud, CloudCheck, Lock } from 'lucide-react';
+import { Store, Globe, Search, WifiOff, Home, LayoutGrid, BarChart2, User, Cloud, CloudCheck, Lock, Mic } from 'lucide-react';
 import { NavigationTab } from './Navigation';
 import { useAuth } from '@/features/auth';
 
@@ -11,6 +11,7 @@ interface HeaderProps {
   onOpenSearch?: () => void;
   onOpenAuth?: () => void;
   isSyncing?: boolean;
+  onOpenVoice?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -21,6 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSearch,
   onOpenAuth,
   isSyncing = false,
+  onOpenVoice,
 }) => {
   const { user, storeName } = useAuth();
 
@@ -96,6 +98,20 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Action Tools */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Voice Assistant Mic Button */}
+          {onOpenVoice && (
+            <button
+              onClick={onOpenVoice}
+              className="h-10 px-3 rounded-2xl border border-violet-200 bg-violet-50 hover:bg-violet-100 flex items-center gap-1.5 text-xs font-black text-violet-800 shadow-2xs transition-all active:scale-95"
+              title={language === 'hi' ? 'वॉइस असिस्टेंट (बोलकर आदेश दें)' : 'Voice Assistant'}
+            >
+              <Mic className="w-4 h-4 text-violet-600 stroke-[2.5]" />
+              <span className="hidden sm:inline">
+                {language === 'hi' ? 'बोलें' : 'Voice'}
+              </span>
+            </button>
+          )}
+
           {/* Search Trigger */}
           <button
             onClick={onOpenSearch}

@@ -1,17 +1,21 @@
 import React from 'react';
 import { AlertCircle, Clock, ArrowUpRight } from 'lucide-react';
 import { ProductWithSales } from '@/data/sampleProducts';
+import { StockMovement } from '@/domain/types';
 import { calculateReorder } from '@/domain/reorder';
 import { getSlowMovingStatus } from '@/domain/stock';
+import { ForecastCard } from '@/ai/forecasting/ForecastCard';
 
 interface ReportsScreenProps {
   products: ProductWithSales[];
+  movements?: StockMovement[];
   language: 'hi' | 'en';
   onReorderClick: (productId: string) => void;
 }
 
 export const ReportsScreen: React.FC<ReportsScreenProps> = ({
   products,
+  movements = [],
   language,
   onReorderClick,
 }) => {
@@ -46,7 +50,7 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = ({
     .filter((item) => item.status.isSlowMoving);
 
   return (
-    <div className="space-y-5 pb-28 pt-2">
+    <div className="space-y-6 pb-28 pt-2">
       {/* Title */}
       <div>
         <h2 className="text-xl font-black text-ink">
@@ -58,6 +62,14 @@ export const ReportsScreen: React.FC<ReportsScreenProps> = ({
             : 'Transparent calculations — zero fabricated claims'}
         </p>
       </div>
+
+      {/* AI Demand Forecasting Card */}
+      <ForecastCard
+        products={products}
+        movements={movements}
+        language={language}
+        onReorderClick={onReorderClick}
+      />
 
       {/* Reorder Suggestions Section */}
       <section className="space-y-3">

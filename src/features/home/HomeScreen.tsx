@@ -12,7 +12,9 @@ import {
   Clock,
   PackageCheck,
   ArrowRight,
-  History
+  History,
+  Camera,
+  Mic
 } from 'lucide-react';
 import { ProductWithSales } from '@/data/sampleProducts';
 import { StockMovement } from '@/domain/types';
@@ -26,6 +28,8 @@ interface HomeScreenProps {
   onOpenAddStock: (productId?: string) => void;
   onNavigateTab: (tab: 'inventory' | 'reports' | 'profile') => void;
   language: 'hi' | 'en';
+  onOpenOCR?: () => void;
+  onOpenVoice?: () => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -35,6 +39,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenAddStock,
   onNavigateTab,
   language,
+  onOpenOCR,
+  onOpenVoice,
 }) => {
   const [selectedDayIndex, setSelectedDayIndex] = useState<number>(3);
   const [copiedWhatsAppToast, setCopiedWhatsAppToast] = useState(false);
@@ -429,6 +435,57 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
             </div>
           </div>
+        </div>
+
+        {/* AI FAST ACTIONS STRIP (OCR & VOICE) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          {/* OCR Invoice Scanner */}
+          {onOpenOCR && (
+            <button
+              onClick={onOpenOCR}
+              className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-sm flex items-center justify-between group active:scale-98 transition-all text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-black group-hover:scale-105 transition-transform">
+                  <Camera className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-black text-slate-900 flex items-center gap-1.5">
+                    <span>{language === 'hi' ? 'बिल / पर्ची स्कैन करें' : 'Scan Bill / Invoice'}</span>
+                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-800">OCR AI</span>
+                  </div>
+                  <p className="text-[11px] font-semibold text-slate-500">
+                    {language === 'hi' ? 'फोटो खींचें, स्टॉक अपने आप पहचाने' : 'Auto-extract products & quantities'}
+                  </p>
+                </div>
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
+            </button>
+          )}
+
+          {/* Voice Assistant */}
+          {onOpenVoice && (
+            <button
+              onClick={onOpenVoice}
+              className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:shadow-sm flex items-center justify-between group active:scale-98 transition-all text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-violet-50 text-violet-700 flex items-center justify-center font-black group-hover:scale-105 transition-transform">
+                  <Mic className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-black text-slate-900 flex items-center gap-1.5">
+                    <span>{language === 'hi' ? 'वॉइस असिस्टेंट' : 'Voice Assistant'}</span>
+                    <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-800">Hinglish</span>
+                  </div>
+                  <p className="text-[11px] font-semibold text-slate-500">
+                    {language === 'hi' ? 'बोलकर बिक्री करें या स्टॉक पूछें' : 'Speak to record sales or check stock'}
+                  </p>
+                </div>
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
+            </button>
+          )}
         </div>
       </section>
 

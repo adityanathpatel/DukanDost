@@ -276,18 +276,21 @@ describe('Phase 3: Database, Persistence & Stock Ledger', () => {
     });
 
     // Sleep slightly to guarantee different timestamps
+    await new Promise((r) => setTimeout(r, 20));
     await repo.recordSale({
       productId: product.id,
       quantity: 1,
       operationId: 'op_hist_1',
     });
 
+    await new Promise((r) => setTimeout(r, 20));
     await repo.recordStockInward({
       productId: product.id,
       quantity: 10,
       operationId: 'op_hist_2',
     });
 
+    await new Promise((r) => setTimeout(r, 20));
     await repo.recordSale({
       productId: product.id,
       quantity: 2,

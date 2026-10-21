@@ -371,7 +371,12 @@ export class ProductRepository {
       .equals(productId)
       .toArray();
 
-    return movements.sort((a, b) => b.timestamp - a.timestamp);
+    return movements.sort((a, b) => {
+      if (b.timestamp !== a.timestamp) {
+        return b.timestamp - a.timestamp;
+      }
+      return b.id.localeCompare(a.id);
+    });
   }
 
   /**

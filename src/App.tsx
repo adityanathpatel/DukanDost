@@ -9,9 +9,11 @@ import { RecordSaleModal } from '@/features/sales/RecordSaleModal';
 import { AddStockModal } from '@/features/stock/AddStockModal';
 import { AuthProvider, AuthModal, useAuth } from '@/features/auth';
 import { firebaseSyncService } from '@/data/firebaseSync';
+import { OCRReviewModal } from '@/ai/ocr/OCRReviewModal';
+import { VoiceAgentModal } from '@/ai/voice/VoiceAgentModal';
 import { INITIAL_SAMPLE_PRODUCTS } from '@/data/sampleProducts';
 import { productRepository, generateId } from '@/data/productRepository';
-import { Product, StockMovement, CreateProductInput, UpdateProductInput } from '@/domain/types';
+import { Product, ProductUnit, StockMovement, CreateProductInput, UpdateProductInput } from '@/domain/types';
 import { CheckCircle2, AlertCircle, Database, PackagePlus } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -26,6 +28,8 @@ const AppContent: React.FC = () => {
   const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isOCRModalOpen, setIsOCRModalOpen] = useState(false);
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [preSelectedProductId, setPreSelectedProductId] = useState<string | undefined>(undefined);
 
   // Sync state
@@ -49,7 +53,7 @@ const AppContent: React.FC = () => {
     try {
       const [persistedProducts, movements] = await Promise.all([
         productRepository.listProducts(),
-        productRepository.getRecentMovements(10),
+        productRepository.getRecentMovements(50),
       ]);
       setProducts(persistedProducts);
       setRecentMovements(movements);
@@ -150,6 +154,54 @@ const AppContent: React.FC = () => {
       const message = err instanceof Error ? err.message : 'माल जोड़ने में त्रुटि';
       showToast(message, true);
       throw err;
+    }
+  };
+
+  // Batch commit from OCR invoice scanner
+  const handleCommitInwardBatch = async (
+    approvedItems: { productId: string; quantity: number; unit: ProductUnit; costPrice?: number }[]
+  ) => {
+    let successCount = 0;
+    const errors: string[] = [];
+
+    for (const item of approvedItems) {
+      if (!item.productId || item.quantity <= 0) continue;
+      try {
+        const opId = generateId('op_ocr');
+        const { product, movement } = await productRepository.recordStockInward({
+          productId: item.productId,
+          quantity: item.quantity,
+          unit: item.unit,
+          operationId: opId,
+          note: language === 'hi' ? 'OCR पर्ची आवक' : 'OCR Inward',
+        });
+
+        if (user) {
+          firebaseSyncService.saveProduct(user.uid, product).catch(console.warn);
+          firebaseSyncService.saveMovement(user.uid, movement).catch(console.warn);
+        }
+
+        successCount++;
+      } catch (err) {
+        errors.push(`${err instanceof Error ? err.message : 'Failed'}`);
+      }
+    }
+
+    await refreshProducts();
+
+    if (errors.length > 0) {
+      showToast(
+        language === 'hi'
+          ? `आंशिक सफलता: ${successCount} आइटम जुड़े, ${errors.length} विफल हुए`
+          : `Partial success: ${successCount} added, ${errors.length} failed`,
+        true
+      );
+    } else {
+      showToast(
+        language === 'hi'
+          ? `🎉 ${successCount} आइटम सफलतापूर्वक इन्वेंट्री में जुड़ गए!`
+          : `🎉 ${successCount} items successfully added to inventory!`
+      );
     }
   };
 
@@ -288,6 +340,7 @@ const AppContent: React.FC = () => {
         onOpenSearch={() => setCurrentTab('inventory')}
         onOpenAuth={() => setIsAuthModalOpen(true)}
         isSyncing={isSyncing}
+        onOpenVoice={() => setIsVoiceModalOpen(true)}
       />
 
       {/* Main Responsive Web Container */}
@@ -339,6 +392,8 @@ const AppContent: React.FC = () => {
                 onOpenAddStock={handleOpenAddStock}
                 onNavigateTab={(tab) => setCurrentTab(tab)}
                 language={language}
+                onOpenOCR={() => setIsOCRModalOpen(true)}
+                onOpenVoice={() => setIsVoiceModalOpen(true)}
               />
             )}
 
@@ -359,6 +414,7 @@ const AppContent: React.FC = () => {
               <div className="max-w-4xl mx-auto py-4">
                 <ReportsScreen
                   products={products}
+                  movements={recentMovements}
                   language={language}
                   onReorderClick={(prodId) => handleOpenAddStock(prodId)}
                 />
@@ -421,6 +477,26 @@ const AppContent: React.FC = () => {
         }
         onAddStock={handleAddStock}
         language={language}
+      />
+
+      {/* OCR Invoice Scanner Modal */}
+      <OCRReviewModal
+        isOpen={isOCRModalOpen}
+        onClose={() => setIsOCRModalOpen(false)}
+        existingProducts={products}
+        language={language}
+        onCommitInwardBatch={handleCommitInwardBatch}
+      />
+
+      {/* Hindi / Hinglish Voice Assistant Modal */}
+      <VoiceAgentModal
+        isOpen={isVoiceModalOpen}
+        onClose={() => setIsVoiceModalOpen(false)}
+        products={products}
+        language={language}
+        onExecuteSale={handleRecordSale}
+        onExecuteInward={handleAddStock}
+        onNavigateToLowStock={() => setCurrentTab('reports')}
       />
 
       {/* Auth Modal (Firebase Login / Register) */}
