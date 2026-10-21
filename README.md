@@ -98,6 +98,37 @@ npm run dev
 
 ---
 
+## 🔥 Firebase Cloud Authentication & Firestore Sync
+
+While Dukaan Dost is architected offline-first using Dexie/IndexedDB, it seamlessly integrates with **Firebase** for cloud backup and multi-device access:
+
+- **🔐 Firebase Auth:** Shopkeepers can sign in or register with email/password. A dedicated bilingual Auth modal supports seamless login, registration, and guest mode.
+- **☁️ Cloud Firestore Database:** Stores synced products and stock movements under isolated user paths (`users/{uid}/products` and `users/{uid}/movements`).
+- **🔄 Resilient Sync Engine:** 
+  - Every sale, stock receipt, and product update automatically syncs to Firestore in the background when online.
+  - Core retail sales and stock changes never block or fail when offline.
+  - 1-tap "Sync Now" button in the Store Profile tab to backup the entire catalog and ledger on demand.
+
+### Environment Setup
+
+Copy `.env.example` to `.env` and configure your Firebase credentials:
+
+```bash
+cp .env.example .env
+```
+
+```env
+VITE_FIREBASE_API_KEY=your_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+```
+
+---
+
 ## 📜 Stock Movement Ledger Sign Convention
 
 Every inventory change logs a `StockMovement` entry:
@@ -113,6 +144,7 @@ Every inventory change logs a `StockMovement` entry:
 ## 📱 Offline Limitations & Privacy
 
 - All product, sale, and stock ledger records are stored locally on the shopkeeper's device inside browser IndexedDB.
-- No analytics, trackers, or remote telemetry are present.
-- **Warning:** Clearing browser/site data can erase local storage. An export/import backup feature is planned for Phase 5.
+- Offline guest mode works 100% without internet connection.
+- Signing into Firebase enables automatic cloud backups and data preservation across device resets.
+- Clearing browser/site data in guest mode will erase local data; shopkeepers are encouraged to sign in to protect their business records.
 
