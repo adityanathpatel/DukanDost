@@ -115,3 +115,4 @@ Every inventory change logs a `StockMovement` entry:
 - All product, sale, and stock ledger records are stored locally on the shopkeeper's device inside browser IndexedDB.
 - No analytics, trackers, or remote telemetry are present.
 - **Warning:** Clearing browser/site data can erase local storage. An export/import backup feature is planned for Phase 5.
+
