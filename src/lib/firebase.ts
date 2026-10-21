@@ -31,7 +31,7 @@ if (isFirebaseConfigured) {
     db = getFirestore(app);
 
     if (typeof window !== 'undefined') {
-      isSupported().then((supported) => {
+      isSupported().then((supported: boolean) => {
         if (supported && app) {
           analytics = getAnalytics(app);
         }
