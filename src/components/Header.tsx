@@ -1,6 +1,7 @@
 import React from 'react';
-import { Store, Globe, Search, WifiOff, Home, LayoutGrid, BarChart2, User } from 'lucide-react';
+import { Store, Globe, Search, WifiOff, Home, LayoutGrid, BarChart2, User, Cloud, CloudCheck, Lock } from 'lucide-react';
 import { NavigationTab } from './Navigation';
+import { useAuth } from '@/features/auth';
 
 interface HeaderProps {
   currentTab: NavigationTab;
@@ -8,6 +9,8 @@ interface HeaderProps {
   language: 'hi' | 'en';
   onLanguageToggle?: () => void;
   onOpenSearch?: () => void;
+  onOpenAuth?: () => void;
+  isSyncing?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -16,7 +19,11 @@ export const Header: React.FC<HeaderProps> = ({
   language,
   onLanguageToggle,
   onOpenSearch,
+  onOpenAuth,
+  isSyncing = false,
 }) => {
+  const { user, storeName } = useAuth();
+
   const todayDateStr = language === 'hi' 
     ? new Intl.DateTimeFormat('hi-IN', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date())
     : new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date());
@@ -45,13 +52,20 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="text-base font-black text-slate-900 tracking-tight">
                   {language === 'hi' ? 'मेरी दुकान' : 'Meri Dukaan'}
                 </span>
-                <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
-                  <WifiOff className="w-2.5 h-2.5" />
-                  100% Offline
-                </span>
+                {user ? (
+                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
+                    <Cloud className="w-2.5 h-2.5" />
+                    Firebase
+                  </span>
+                ) : (
+                  <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-black">
+                    <WifiOff className="w-2.5 h-2.5" />
+                    100% Offline
+                  </span>
+                )}
               </div>
               <p className="text-[11px] font-semibold text-slate-400">
-                Sharma Kirana Store • {todayDateStr}
+                {storeName} • {todayDateStr}
               </p>
             </div>
           </button>
@@ -92,6 +106,29 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">
               {language === 'hi' ? 'सामान खोजें...' : 'Search items...'}
             </span>
+          </button>
+
+          {/* Auth Button */}
+          <button
+            onClick={onOpenAuth}
+            className={`h-10 px-3 rounded-2xl border flex items-center gap-1.5 text-xs font-black transition-all active:scale-95 ${
+              user
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+            }`}
+            title={user ? user.email || 'Account' : 'Login / Sign Up'}
+          >
+            {user ? (
+              <>
+                <CloudCheck className={`w-4 h-4 text-emerald-600 ${isSyncing ? 'animate-bounce' : ''}`} />
+                <span className="hidden sm:inline max-w-[90px] truncate">{user.displayName || user.email?.split('@')[0]}</span>
+              </>
+            ) : (
+              <>
+                <Lock className="w-3.5 h-3.5 text-slate-400" />
+                <span>{language === 'hi' ? 'लॉगिन' : 'Login'}</span>
+              </>
+            )}
           </button>
 
           {/* Language Switch */}

@@ -7,12 +7,15 @@ import { ReportsScreen } from '@/features/reports/ReportsScreen';
 import { ProfileScreen } from '@/features/profile/ProfileScreen';
 import { RecordSaleModal } from '@/features/sales/RecordSaleModal';
 import { AddStockModal } from '@/features/stock/AddStockModal';
+import { AuthProvider, AuthModal, useAuth } from '@/features/auth';
+import { firebaseSyncService } from '@/data/firebaseSync';
 import { INITIAL_SAMPLE_PRODUCTS } from '@/data/sampleProducts';
 import { productRepository, generateId } from '@/data/productRepository';
 import { Product, StockMovement, CreateProductInput, UpdateProductInput } from '@/domain/types';
 import { CheckCircle2, AlertCircle, Database, PackagePlus } from 'lucide-react';
 
-export const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { user } = useAuth();
   const [language, setLanguage] = useState<'hi' | 'en'>('hi');
   const [currentTab, setCurrentTab] = useState<NavigationTab>('home');
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,7 +25,12 @@ export const App: React.FC = () => {
   // Modals state
   const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [isAddStockModalOpen, setIsAddStockModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [preSelectedProductId, setPreSelectedProductId] = useState<string | undefined>(undefined);
+
+  // Sync state
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(() => firebaseSyncService.getLastSyncedAt());
 
   // Feedback toast
   const [toastMessage, setToastMessage] = useState<{ text: string; isError?: boolean } | null>(null);
@@ -57,6 +65,20 @@ export const App: React.FC = () => {
     refreshProducts();
   }, [refreshProducts]);
 
+  // Synchronize with Firebase when user signs in
+  useEffect(() => {
+    if (user) {
+      setIsSyncing(true);
+      firebaseSyncService.pullFromFirestore(user.uid)
+        .then(() => refreshProducts())
+        .catch((err) => console.warn('[App] Pull error:', err))
+        .finally(() => {
+          setIsSyncing(false);
+          setLastSyncedAt(firebaseSyncService.getLastSyncedAt());
+        });
+    }
+  }, [user, refreshProducts]);
+
   const handleOpenRecordSale = (productId?: string) => {
     setPreSelectedProductId(productId);
     setIsSaleModalOpen(true);
@@ -67,7 +89,7 @@ export const App: React.FC = () => {
     setIsAddStockModalOpen(true);
   };
 
-  // Atomic Record Sale via IndexedDB
+  // Atomic Record Sale via IndexedDB + Async Firebase Sync
   const handleRecordSale = async (productId: string, quantity: number) => {
     const operationId = generateId('op_sale');
     try {
@@ -79,6 +101,12 @@ export const App: React.FC = () => {
       });
 
       await refreshProducts();
+
+      // Async sync to Firebase Firestore if logged in
+      if (user) {
+        firebaseSyncService.saveProduct(user.uid, product).catch(console.warn);
+        firebaseSyncService.saveMovement(user.uid, movement).catch(console.warn);
+      }
 
       const prodName = language === 'hi' ? product.nameHi || product.name : product.name;
       showToast(
@@ -93,7 +121,7 @@ export const App: React.FC = () => {
     }
   };
 
-  // Atomic Add Stock via IndexedDB
+  // Atomic Add Stock via IndexedDB + Async Firebase Sync
   const handleAddStock = async (productId: string, quantity: number) => {
     const operationId = generateId('op_inward');
     try {
@@ -105,6 +133,12 @@ export const App: React.FC = () => {
       });
 
       await refreshProducts();
+
+      // Async sync to Firebase Firestore if logged in
+      if (user) {
+        firebaseSyncService.saveProduct(user.uid, product).catch(console.warn);
+        firebaseSyncService.saveMovement(user.uid, movement).catch(console.warn);
+      }
 
       const prodName = language === 'hi' ? product.nameHi || product.name : product.name;
       showToast(
@@ -119,11 +153,16 @@ export const App: React.FC = () => {
     }
   };
 
-  // Create Product via IndexedDB
+  // Create Product via IndexedDB + Async Firebase Sync
   const handleAddProduct = async (input: CreateProductInput) => {
     try {
       const newProd = await productRepository.createProduct(input);
       await refreshProducts();
+
+      if (user) {
+        firebaseSyncService.saveProduct(user.uid, newProd).catch(console.warn);
+      }
+
       showToast(
         language === 'hi'
           ? `✅ नया सामान जुड़ा: ${newProd.name} (स्टॉक: ${newProd.stockQty} ${newProd.unit})`
@@ -136,11 +175,16 @@ export const App: React.FC = () => {
     }
   };
 
-  // Update Product metadata via IndexedDB
+  // Update Product metadata via IndexedDB + Async Firebase Sync
   const handleUpdateProduct = async (id: string, updates: UpdateProductInput) => {
     try {
       const updated = await productRepository.updateProduct(id, updates);
       await refreshProducts();
+
+      if (user) {
+        firebaseSyncService.saveProduct(user.uid, updated).catch(console.warn);
+      }
+
       showToast(
         language === 'hi'
           ? `✅ विवरण अपडेट: ${updated.name}`
@@ -150,6 +194,31 @@ export const App: React.FC = () => {
       const message = err instanceof Error ? err.message : 'अपडेट में त्रुटि';
       showToast(message, true);
       throw err;
+    }
+  };
+
+  // Manual Trigger to sync all IndexedDB data to Firestore
+  const handleSyncNow = async () => {
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setIsSyncing(true);
+    try {
+      const { productsCount, movementsCount } = await firebaseSyncService.pushAllToFirestore(user.uid);
+      await refreshProducts();
+      setLastSyncedAt(firebaseSyncService.getLastSyncedAt());
+      showToast(
+        language === 'hi'
+          ? `✅ Firebase में सुरक्षित: ${productsCount} सामान, ${movementsCount} लेन-देन!`
+          : `✅ Synced to Firebase: ${productsCount} products, ${movementsCount} ledger entries!`
+      );
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'सिंक त्रुटि';
+      showToast(message, true);
+      throw err;
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -217,6 +286,8 @@ export const App: React.FC = () => {
         language={language}
         onLanguageToggle={toggleLanguage}
         onOpenSearch={() => setCurrentTab('inventory')}
+        onOpenAuth={() => setIsAuthModalOpen(true)}
+        isSyncing={isSyncing}
       />
 
       {/* Main Responsive Web Container */}
@@ -300,6 +371,10 @@ export const App: React.FC = () => {
                   language={language}
                   onToggleLanguage={toggleLanguage}
                   onResetData={handleResetData}
+                  onOpenAuth={() => setIsAuthModalOpen(true)}
+                  onSyncNow={handleSyncNow}
+                  isSyncing={isSyncing}
+                  lastSyncedAt={lastSyncedAt}
                 />
               </div>
             )}
@@ -347,7 +422,22 @@ export const App: React.FC = () => {
         onAddStock={handleAddStock}
         language={language}
       />
+
+      {/* Auth Modal (Firebase Login / Register) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        language={language}
+      />
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 
