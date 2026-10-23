@@ -1,8 +1,8 @@
 import React from 'react';
-import { Home, LayoutGrid, BarChart2, User } from 'lucide-react';
+import { Home, LayoutGrid, BarChart2, User, Sparkles } from 'lucide-react';
 import { clsx } from 'clsx';
 
-export type NavigationTab = 'home' | 'inventory' | 'reports' | 'profile';
+export type NavigationTab = 'home' | 'inventory' | 'reports' | 'hustle' | 'profile';
 
 interface NavigationProps {
   currentTab: NavigationTab;
@@ -27,6 +27,11 @@ export const Navigation: React.FC<NavigationProps> = ({
       icon: LayoutGrid, // 4-grid squares icon matching reference
     },
     {
+      id: 'hustle' as NavigationTab,
+      label: 'Hustle AI',
+      icon: Sparkles, // Hustle AI billing & tools icon
+    },
+    {
       id: 'reports' as NavigationTab,
       label: 'Reports',
       icon: BarChart2, // 3-bar analytics icon matching reference
@@ -41,7 +46,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   return (
     <nav 
       aria-label="Bottom Navigation"
-      className="fixed bottom-6 left-0 right-0 max-w-[360px] mx-auto px-4 z-40"
+      className="fixed bottom-6 left-0 right-0 max-w-[420px] mx-auto px-4 z-40"
     >
       <div className="bg-[#0B0F19] text-white rounded-[32px] px-3 py-2 shadow-2xl flex items-center justify-between border border-white/10 backdrop-blur-md">
         {tabs.map((tab) => {

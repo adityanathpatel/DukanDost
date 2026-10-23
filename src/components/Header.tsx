@@ -9,6 +9,7 @@ import {
   Cloud,
   Mic,
   ChevronDown,
+  Sparkles,
 } from 'lucide-react';
 import { NavigationTab } from './Navigation';
 import { useAuth } from '@/features/auth';
@@ -42,9 +43,10 @@ export const Header: React.FC<HeaderProps> = ({
     ? new Intl.DateTimeFormat('hi-IN', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date())
     : new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date());
 
-  // Dashboard + Reports only; Inventory removed from navbar
+  // Dashboard + Hustle AI + Reports in desktop navbar
   const navLinks = [
     { id: 'home' as NavigationTab, label: language === 'hi' ? 'डैशबोर्ड' : 'Dashboard', icon: Home },
+    { id: 'hustle' as NavigationTab, label: language === 'hi' ? '⚡ बिल व AI' : '⚡ Hustle AI', icon: Sparkles },
     { id: 'reports' as NavigationTab, label: language === 'hi' ? 'रीऑर्डर रिपोर्ट' : 'Reports', icon: BarChart2 },
   ];
 
@@ -199,7 +201,7 @@ export const Header: React.FC<HeaderProps> = ({
           if (onOpenAuth) onOpenAuth();
           setIsProfileModalOpen(false);
         }}
-        onTriggerDemo={() => {}}
+        onTriggerDemo={async () => {}}
       />
     </>
   );

@@ -5,6 +5,7 @@ import { HomeScreen } from '@/features/home/HomeScreen';
 import { InventoryScreen } from '@/features/inventory/InventoryScreen';
 import { ReportsScreen } from '@/features/reports/ReportsScreen';
 import { ProfileScreen } from '@/features/profile/ProfileScreen';
+import { HustleAiScreen } from '@/features/hustle/HustleAiScreen';
 import { RecordSaleModal } from '@/features/sales/RecordSaleModal';
 import { AddStockModal } from '@/features/stock/AddStockModal';
 import { AuthProvider, AuthModal, ShopkeeperLoginPage, useAuth } from '@/features/auth';
@@ -430,6 +431,17 @@ const AppContent: React.FC = () => {
                   movements={recentMovements}
                   language={language}
                   onReorderClick={(prodId) => handleOpenAddStock(prodId)}
+                />
+              </div>
+            )}
+
+            {currentTab === 'hustle' && (
+              <div className="max-w-6xl mx-auto py-4">
+                <HustleAiScreen
+                  products={products}
+                  language={language}
+                  onRecordSale={handleRecordSale}
+                  onAddStockBatch={handleCommitInwardBatch}
                 />
               </div>
             )}

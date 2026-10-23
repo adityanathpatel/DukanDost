@@ -13,3 +13,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+Hustle_AI/
+
+*.db

@@ -55,10 +55,12 @@ export function generateWhatsAppOrderMessage(options: WhatsAppMessageOptions): s
 /**
  * Opens WhatsApp with the pre-filled message and copies to clipboard as a fallback
  */
-export function triggerWhatsAppShare(message: string): { success: boolean; url: string } {
+export function triggerWhatsAppShare(message: string, phone?: string): { success: boolean; url: string } {
   const encodedText = encodeURIComponent(message);
+  const cleanPhone = phone ? phone.replace(/\D/g, '') : '';
+  const phoneParam = cleanPhone ? (cleanPhone.length === 10 ? `phone=91${cleanPhone}&` : `phone=${cleanPhone}&`) : '';
   // Universal WhatsApp share URL compatible with Desktop WhatsApp Web and Android/iOS Native WhatsApp
-  const whatsappUrl = `https://api.whatsapp.com/send?text=${encodedText}`;
+  const whatsappUrl = `https://api.whatsapp.com/send?${phoneParam}text=${encodedText}`;
 
   // Copy to clipboard in background
   if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {

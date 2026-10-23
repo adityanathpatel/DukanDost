@@ -14,7 +14,8 @@ import {
   ArrowRight,
   History,
   Camera,
-  Mic
+  Mic,
+  Sparkles
 } from 'lucide-react';
 import { ProductWithSales } from '@/data/sampleProducts';
 import { StockMovement } from '@/domain/types';
@@ -23,12 +24,14 @@ import { getStockStatus, getSlowMovingStatus } from '@/domain/stock';
 import { generateWhatsAppOrderMessage, triggerWhatsAppShare } from '@/domain/whatsapp';
 import { useAuth } from '@/features/auth';
 
+import { NavigationTab } from '@/components/Navigation';
+
 interface HomeScreenProps {
   products: ProductWithSales[];
   recentMovements?: StockMovement[];
   onOpenRecordSale: (productId?: string) => void;
   onOpenAddStock: (productId?: string) => void;
-  onNavigateTab: (tab: 'inventory' | 'reports' | 'profile') => void;
+  onNavigateTab: (tab: NavigationTab) => void;
   language: 'hi' | 'en';
   onOpenOCR?: () => void;
   onOpenVoice?: () => void;
@@ -441,6 +444,37 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Hustle AI Billing & Tools Banner */}
+        <div
+          onClick={() => onNavigateTab('hustle')}
+          className="p-5 rounded-3xl bg-gradient-to-r from-slate-950 via-indigo-950 to-purple-950 text-white shadow-xl border border-white/10 cursor-pointer hover:shadow-2xl transition-all group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-500 to-yellow-300 text-slate-950 flex items-center justify-center font-black group-hover:scale-110 transition-transform shadow-lg shadow-amber-500/30 flex-shrink-0">
+              <Sparkles className="w-6 h-6 stroke-[2.5]" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-base font-black text-white">
+                  {language === 'hi' ? '⚡ बिल बनाएं (Invoice Studio) & Hustle AI' : '⚡ Generate Bill & Hustle AI Copilot'}
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black uppercase">
+                  NEW
+                </span>
+              </div>
+              <p className="text-xs text-amber-200/90 font-medium mt-0.5">
+                {language === 'hi'
+                  ? 'दुकान बिल बनाएं, WhatsApp पर भेजें, त्योहारों का प्रचार करें व उधार तकादा भेजें'
+                  : 'Deterministic invoices, vector PDF, WhatsApp broadcasts, and credit reminders'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-black text-amber-300 self-end sm:self-center">
+            <span>{language === 'hi' ? 'बिलिंग शुरू करें' : 'Open Studio'}</span>
+            <ArrowUpRight className="w-4 h-4 stroke-[3]" />
           </div>
         </div>
 
