@@ -1,6 +1,25 @@
 /**
- * Domain types for Meri Dukaan / Dukaan Dost
+ * Domain types for Dukan Dost
  */
+
+export type StoreCategory =
+  | 'Kirana / Grocery'
+  | 'Electrical / Hardware'
+  | 'Medical / Pharmacy'
+  | 'Apparel / Garments'
+  | 'General Store';
+
+export interface ShopkeeperProfile {
+  shopkeeperName: string;
+  storeName: string;
+  storeCategory: StoreCategory;
+  storeAddress: string;
+  pincode: string;
+  phone: string;
+  gstin?: string;
+  email?: string;
+  createdAt?: number;
+}
 
 export type ProductUnit = 
   | 'piece'   // पीस (नग)

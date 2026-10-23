@@ -24,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   isSyncing = false,
   onOpenVoice,
 }) => {
-  const { user, storeName } = useAuth();
+  const { user, storeName, profile } = useAuth();
 
   const todayDateStr = language === 'hi' 
     ? new Intl.DateTimeFormat('hi-IN', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date())
@@ -34,7 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'home' as NavigationTab, label: language === 'hi' ? 'डैशबोर्ड' : 'Dashboard', icon: Home },
     { id: 'inventory' as NavigationTab, label: language === 'hi' ? 'स्टॉक सूची' : 'Inventory', icon: LayoutGrid },
     { id: 'reports' as NavigationTab, label: language === 'hi' ? 'रीऑर्डर रिपोर्ट' : 'Reorder Reports', icon: BarChart2 },
-    { id: 'profile' as NavigationTab, label: language === 'hi' ? 'दुकान सेटिंग' : 'Store Profile', icon: User },
+    { id: 'profile' as NavigationTab, label: language === 'hi' ? 'दुकानदार प्रोफ़ाइल' : 'Store Profile', icon: User },
   ];
 
   return (
@@ -52,8 +52,13 @@ export const Header: React.FC<HeaderProps> = ({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-base font-black text-slate-900 tracking-tight">
-                  {language === 'hi' ? 'मेरी दुकान' : 'Meri Dukaan'}
+                  {language === 'hi' ? 'दुकान दोस्त' : 'Dukan Dost'}
                 </span>
+                {profile?.storeCategory && (
+                  <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-black">
+                    {profile.storeCategory.split('/')[0].trim()}
+                  </span>
+                )}
                 {user ? (
                   <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black">
                     <Cloud className="w-2.5 h-2.5" />
@@ -67,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
                 )}
               </div>
               <p className="text-[11px] font-semibold text-slate-400">
-                {storeName} • {todayDateStr}
+                {storeName} {profile?.shopkeeperName ? `• ${profile.shopkeeperName}` : ''} • {todayDateStr}
               </p>
             </div>
           </button>

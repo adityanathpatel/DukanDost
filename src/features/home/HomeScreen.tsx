@@ -643,11 +643,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       <footer className="pt-4 pb-2 border-t border-slate-200/60 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
         <p>
           {language === 'hi' 
-            ? 'मेरी दुकान — 100% ऑफलाइन लोकल स्टोरेज • शून्य सर्वर निर्भरता' 
-            : 'Meri Dukaan — 100% Offline Local Persistence • Zero Server Dependency'}
+            ? 'दुकान दोस्त — 100% ऑफलाइन लोकल स्टोरेज • शून्य सर्वर निर्भरता' 
+            : 'Dukan Dost — 100% Offline Local Persistence • Zero Server Dependency'}
         </p>
         <p>
-          Sharma Kirana Store • Verified Phase 2 Pure Domain Math
+          {storeName} • Verified Phase 2 Pure Domain Math
         </p>
       </footer>
     </div>

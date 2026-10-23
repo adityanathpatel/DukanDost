@@ -31,7 +31,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, language 
         await signIn(email, password);
         setSuccessMsg(language === 'hi' ? 'सफलतापूर्वक लॉगिन हुआ!' : 'Logged in successfully!');
       } else {
-        await signUp(email, password, storeNameInput);
+        await signUp({
+          shopkeeperName: storeNameInput.trim() || 'दुकानदार',
+          storeName: storeNameInput.trim() || 'दुकान दोस्त',
+          storeCategory: 'Kirana / Grocery',
+          storeAddress: 'सदर बाज़ार',
+          pincode: '226001',
+          phone: '9876543210',
+          email,
+          password,
+        });
         setSuccessMsg(language === 'hi' ? 'नया खाता सफलतापूर्वक बन गया!' : 'Account created successfully!');
       }
       setTimeout(() => {

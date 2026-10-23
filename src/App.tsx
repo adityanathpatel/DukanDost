@@ -7,7 +7,7 @@ import { ReportsScreen } from '@/features/reports/ReportsScreen';
 import { ProfileScreen } from '@/features/profile/ProfileScreen';
 import { RecordSaleModal } from '@/features/sales/RecordSaleModal';
 import { AddStockModal } from '@/features/stock/AddStockModal';
-import { AuthProvider, AuthModal, useAuth } from '@/features/auth';
+import { AuthProvider, AuthModal, ShopkeeperLoginPage, useAuth } from '@/features/auth';
 import { firebaseSyncService } from '@/data/firebaseSync';
 import { OCRReviewModal } from '@/ai/ocr/OCRReviewModal';
 import { VoiceAgentModal } from '@/ai/voice/VoiceAgentModal';
@@ -17,12 +17,13 @@ import { Product, ProductUnit, StockMovement, CreateProductInput, UpdateProductI
 import { CheckCircle2, AlertCircle, Database, PackagePlus } from 'lucide-react';
 
 const AppContent: React.FC = () => {
-  const { user } = useAuth();
+  const { user, profile, isGuest, loading: authLoading } = useAuth();
   const [language, setLanguage] = useState<'hi' | 'en'>('hi');
   const [currentTab, setCurrentTab] = useState<NavigationTab>('home');
   const [products, setProducts] = useState<Product[]>([]);
   const [recentMovements, setRecentMovements] = useState<StockMovement[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showLoginPage, setShowLoginPage] = useState<boolean>(false);
 
   // Modals state
   const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
@@ -313,6 +314,17 @@ const AppContent: React.FC = () => {
     }
   };
 
+  if ((!user && !profile && !isGuest && !authLoading) || showLoginPage) {
+    return (
+      <ShopkeeperLoginPage
+        language={language}
+        onToggleLanguage={toggleLanguage}
+        onSuccess={() => setShowLoginPage(false)}
+        onSkip={() => setShowLoginPage(false)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-ink flex flex-col font-sans selection:bg-dukaan-green-100">
       {/* Toast Feedback */}
@@ -338,7 +350,7 @@ const AppContent: React.FC = () => {
         language={language}
         onLanguageToggle={toggleLanguage}
         onOpenSearch={() => setCurrentTab('inventory')}
-        onOpenAuth={() => setIsAuthModalOpen(true)}
+        onOpenAuth={() => setShowLoginPage(true)}
         isSyncing={isSyncing}
         onOpenVoice={() => setIsVoiceModalOpen(true)}
       />
@@ -427,7 +439,7 @@ const AppContent: React.FC = () => {
                   language={language}
                   onToggleLanguage={toggleLanguage}
                   onResetData={handleResetData}
-                  onOpenAuth={() => setIsAuthModalOpen(true)}
+                  onOpenAuth={() => setShowLoginPage(true)}
                   onSyncNow={handleSyncNow}
                   isSyncing={isSyncing}
                   lastSyncedAt={lastSyncedAt}
