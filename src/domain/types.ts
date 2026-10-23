@@ -21,6 +21,18 @@ export interface ShopkeeperProfile {
   createdAt?: number;
 }
 
+export const DEFAULT_SHOPKEEPER_PROFILE: ShopkeeperProfile = {
+  shopkeeperName: 'रमेश शर्मा',
+  storeName: 'शर्मा किराना स्टोर',
+  storeCategory: 'Kirana / Grocery',
+  storeAddress: 'मेन मार्केट, चौक चौराहा',
+  pincode: '226001',
+  phone: '9876543210',
+  gstin: '09AAAAA0000A1Z5',
+  email: 'sharma.kirana@dukandost.in',
+  createdAt: 1729700000000,
+};
+
 export type ProductUnit = 
   | 'piece'   // पीस (नग)
   | 'packet'  // पैकेट

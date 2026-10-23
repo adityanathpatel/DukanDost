@@ -10,7 +10,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db as firestoreDb, isFirebaseConfigured } from '@/lib/firebase';
-import { ShopkeeperProfile } from '@/domain/types';
+import { ShopkeeperProfile, DEFAULT_SHOPKEEPER_PROFILE } from '@/domain/types';
 
 interface SignUpInput {
   shopkeeperName: string;
@@ -43,18 +43,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const LOCAL_STORE_NAME_KEY = 'dukaan_dost_store_name';
 const LOCAL_PROFILE_KEY = 'dukaan_dost_shopkeeper_profile';
 const LOCAL_GUEST_KEY = 'dukaan_dost_is_guest';
-
-export const DEFAULT_SHOPKEEPER_PROFILE: ShopkeeperProfile = {
-  shopkeeperName: 'रमेश शर्मा',
-  storeName: 'शर्मा किराना स्टोर',
-  storeCategory: 'Kirana / Grocery',
-  storeAddress: 'मेन मार्केट, चौक चौराहा',
-  pincode: '226001',
-  phone: '9876543210',
-  gstin: '09AAAAA0000A1Z5',
-  email: 'sharma.kirana@dukandost.in',
-  createdAt: Date.now(),
-};
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);

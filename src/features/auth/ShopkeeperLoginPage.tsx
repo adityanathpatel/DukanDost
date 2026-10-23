@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth, DEFAULT_SHOPKEEPER_PROFILE } from './AuthContext';
-import { StoreCategory } from '@/domain/types';
+import { useAuth } from './AuthContext';
+import { StoreCategory, DEFAULT_SHOPKEEPER_PROFILE } from '@/domain/types';
 import {
   Store,
   User,
