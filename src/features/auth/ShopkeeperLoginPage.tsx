@@ -367,6 +367,34 @@ export const ShopkeeperLoginPage: React.FC<ShopkeeperLoginPageProps> = ({
             </button>
           </div>
 
+          {/* ⚡ Top Prominent 1-Click Demo Login Shortcut */}
+          <div className="p-4 bg-amber-50/70 border-b border-amber-200/80">
+            <button
+              type="button"
+              onClick={handle1ClickDemo}
+              disabled={isLoading}
+              className="w-full p-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black text-xs shadow-xs border border-amber-400 flex items-center justify-between transition-all active:scale-98 group"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-slate-950 text-amber-300 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div className="text-left">
+                  <div className="font-black text-xs text-slate-950 leading-tight">
+                    {language === 'hi' ? '⚡ 1-क्लिक डेमो लॉगिन (शर्मा किराना स्टोर)' : '⚡ 1-Click Demo Kirana Login (Sharma Kirana Store)'}
+                  </div>
+                  <div className="text-[10px] font-bold text-slate-700 leading-tight">
+                    {language === 'hi' ? 'बिना कुछ टाइप किए सीधे दुकान व स्टॉक देखें' : 'Instant access with pre-filled Kirana store data'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 bg-slate-950 text-amber-300 text-[11px] font-black px-2.5 py-1 rounded-xl group-hover:bg-slate-800 transition-colors">
+                <span>{language === 'hi' ? 'सीधे लॉगिन' : 'Quick Login'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </div>
+            </button>
+          </div>
+
           {/* Feedback messages */}
           <div className="px-6 pt-4">
             {error && (

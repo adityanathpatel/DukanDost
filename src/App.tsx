@@ -353,6 +353,7 @@ const AppContent: React.FC = () => {
         onOpenAuth={() => setShowLoginPage(true)}
         isSyncing={isSyncing}
         onOpenVoice={() => setIsVoiceModalOpen(true)}
+        onSeedSampleData={handleLoadSampleData}
       />
 
       {/* Main Responsive Web Container */}

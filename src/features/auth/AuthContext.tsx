@@ -33,6 +33,7 @@ interface AuthContextType {
   storeName: string;
   signIn: (identifier: string, password?: string) => Promise<void>;
   signUp: (input: SignUpInput) => Promise<void>;
+  demoLogin: () => Promise<void>;
   logOut: () => Promise<void>;
   updateProfileData: (updates: Partial<ShopkeeperProfile>) => Promise<void>;
   setGuest: (guest: boolean) => void;
@@ -223,6 +224,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const demoLogin = async () => {
+    const newProfile: ShopkeeperProfile = {
+      ...DEFAULT_SHOPKEEPER_PROFILE,
+      createdAt: Date.now(),
+    };
+    setProfile(newProfile);
+    localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(newProfile));
+    setStoreName(newProfile.storeName);
+    localStorage.setItem(LOCAL_STORE_NAME_KEY, newProfile.storeName);
+    setIsGuestState(false);
+    localStorage.setItem(LOCAL_GUEST_KEY, 'false');
+  };
+
   const logOut = async () => {
     if (auth) {
       try {
@@ -249,6 +263,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         storeName,
         signIn,
         signUp,
+        demoLogin,
         logOut,
         updateProfileData,
         setGuest,
