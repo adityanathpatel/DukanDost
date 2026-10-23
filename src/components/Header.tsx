@@ -40,9 +40,7 @@ export const Header: React.FC<HeaderProps> = ({
   const { user, storeName, profile } = useAuth();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-  const todayDateStr = language === 'hi'
-    ? new Intl.DateTimeFormat('hi-IN', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date())
-    : new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date());
+
 
   // Dashboard + Inventory + Hustle AI + Reports in desktop navbar
   const navLinks = [
@@ -94,14 +92,6 @@ export const Header: React.FC<HeaderProps> = ({
                     </span>
                   )}
                 </div>
-
-                <p className="text-xs font-semibold text-slate-400 mt-0.5 flex items-center gap-1.5 truncate max-w-[200px] sm:max-w-xs">
-                  <span className="text-amber-300 font-extrabold">{storeName}</span>
-                  {profile?.shopkeeperName ? (
-                    <span className="hidden sm:inline text-slate-400">• {profile.shopkeeperName}</span>
-                  ) : null}
-                  <span className="hidden md:inline text-slate-500">• {todayDateStr}</span>
-                </p>
               </div>
             </button>
           </div>
