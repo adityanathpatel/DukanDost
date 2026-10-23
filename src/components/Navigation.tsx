@@ -46,7 +46,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   return (
     <nav 
       aria-label="Bottom Navigation"
-      className="fixed bottom-6 left-0 right-0 max-w-[420px] mx-auto px-4 z-40"
+      className="fixed bottom-6 left-0 right-0 max-w-[420px] mx-auto px-4 z-40 md:hidden"
     >
       <div className="bg-[#0B0F19] text-white rounded-[32px] px-3 py-2 shadow-2xl flex items-center justify-between border border-white/10 backdrop-blur-md">
         {tabs.map((tab) => {
