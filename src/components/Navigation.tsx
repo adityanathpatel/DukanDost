@@ -55,7 +55,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               className={clsx(
                 'transition-all duration-200 flex items-center justify-center',
                 isActive
-                  ? 'w-13 h-12 px-4 rounded-full bg-white text-slate-900 shadow-lg scale-100'
+                  ? 'w-13 h-12 px-4 rounded-full bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-300 text-slate-950 font-black shadow-lg shadow-amber-500/30 scale-105'
                   : 'w-11 h-11 rounded-full text-slate-400 hover:text-white active:scale-95'
               )}
               aria-label={tab.label}
@@ -64,7 +64,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               <Icon 
                 className={clsx(
                   'w-5 h-5 transition-transform',
-                  isActive ? 'text-slate-900 stroke-[2.5]' : 'text-slate-400 stroke-[2]'
+                  isActive ? 'text-slate-950 stroke-[2.8]' : 'text-slate-400 stroke-[2]'
                 )} 
               />
             </button>

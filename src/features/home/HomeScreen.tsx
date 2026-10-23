@@ -132,22 +132,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       )}
 
-      {/* 1. TOP HERO BANNER (Spacious Responsive Web Card) */}
+      {/* 1. TOP HERO BANNER (Spacious Responsive Web Card with Vibrant Pop Palette) */}
       <section 
-        className="relative overflow-hidden rounded-3xl p-6 sm:p-8 shadow-sm text-slate-900 bg-gradient-to-r from-[#A898F8] via-[#B4A7FA] to-[#C4BAFC]"
+        className="relative overflow-hidden rounded-3xl p-6 sm:p-8 shadow-xl text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-purple-700 border-2 border-violet-400/30"
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/40 backdrop-blur-xs text-xs font-black text-slate-950">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400 text-slate-950 text-xs font-black shadow-sm">
               <span>⚡</span>
               <span>{language === 'hi' ? 'दैनिक इन्वेंट्री प्राथमिकताएं' : 'Daily Inventory Priorities'}</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-slate-950">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight text-white drop-shadow-xs">
               {language === 'hi' 
                 ? `${totalUrgent} आइटम आज तुरंत मंगाने की ज़रूरत है` 
                 : `${totalUrgent} items require urgent reordering today`}
             </h2>
-            <p className="text-sm font-semibold text-slate-800 leading-relaxed">
+            <p className="text-sm font-semibold text-violet-100 leading-relaxed">
               {language === 'hi' 
                 ? 'शाम के ग्राहकों की भीड़ से पहले सप्लायर को रीऑर्डर भेजें ताकि बिक्री का नुकसान न हो।' 
                 : 'Send reorder requests to your distributors before evening footfall to prevent stockouts.'}
@@ -156,17 +156,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={() => onNavigateTab('reports')}
-                className="px-5 py-2.5 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-extrabold text-xs shadow-md flex items-center gap-2 active:scale-95 transition-all"
+                className="px-5 py-2.5 rounded-2xl bg-white hover:bg-slate-100 text-slate-950 font-black text-xs shadow-md flex items-center gap-2 active:scale-95 transition-all"
               >
                 <span>{language === 'hi' ? 'पूरी रीऑर्डर शीट देखें' : 'View Reorder Sheet'}</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 text-violet-700" />
               </button>
 
               <button
                 onClick={handleWhatsAppShare}
-                className="px-4 py-2.5 rounded-2xl bg-white/90 hover:bg-white text-slate-900 font-extrabold text-xs shadow-xs flex items-center gap-2 active:scale-95 transition-all"
+                className="px-4.5 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-black text-xs shadow-md flex items-center gap-2 active:scale-95 transition-all border border-emerald-300/40"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                <MessageCircle className="w-4 h-4 text-white stroke-[2.5]" />
                 <span>{language === 'hi' ? 'WhatsApp पर शेयर करें' : 'Share on WhatsApp'}</span>
               </button>
             </div>
@@ -304,18 +304,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Action 1: Record Sale (Pastel Orange) */}
+          {/* Action 1: Record Sale (Pop Amber-Orange Gradient) */}
           <div 
             onClick={() => onOpenRecordSale()}
-            className="rounded-3xl p-6 flex flex-col justify-between shadow-sm cursor-pointer hover:shadow-md transition-all active:scale-98"
-            style={{ backgroundColor: '#F8B146' }}
+            className="rounded-3xl p-6 flex flex-col justify-between shadow-lg shadow-amber-500/20 cursor-pointer hover:shadow-xl transition-all active:scale-98 bg-gradient-to-br from-amber-400 via-amber-400 to-orange-400 text-slate-950 border-2 border-amber-300"
           >
             <div>
               <div className="flex items-center justify-between">
-                <span className="inline-block px-3 py-1 rounded-full bg-white/50 text-xs font-black text-slate-950">
+                <span className="inline-block px-3 py-1 rounded-full bg-slate-950 text-amber-300 text-xs font-black shadow-xs">
                   {language === 'hi' ? '⚡ त्वरित बिक्री' : 'Fast Sale'}
                 </span>
-                <span className="text-xs font-bold text-slate-900">
+                <span className="text-xs font-black text-slate-950">
                   3 Taps
                 </span>
               </div>
@@ -324,7 +323,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {language === 'hi' ? 'बिक्री दर्ज करें' : 'Record Sale'}
               </h4>
 
-              <p className="text-xs font-bold text-slate-900/80 mt-2 leading-relaxed">
+              <p className="text-xs font-extrabold text-slate-900 mt-2 leading-relaxed">
                 {language === 'hi' 
                   ? 'ग्राहक को सामान देते समय तुरंत मात्रा घटाएं। कापी-कलम से 3 गुना तेज़।' 
                   : 'Deduct stock instantly while attending customers. 3x faster than a notebook.'}
@@ -340,22 +339,21 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   {language === 'hi' ? 'बिक्री शुरू करें' : 'Start Sale'}
                 </span>
               </div>
-              <ArrowUpRight className="w-5 h-5 text-slate-950" />
+              <ArrowUpRight className="w-5 h-5 text-slate-950 stroke-[3]" />
             </div>
           </div>
 
-          {/* Action 2: Add Inward Stock (Pastel Sky Blue) */}
+          {/* Action 2: Add Inward Stock (Pop Cyan-Sky Gradient) */}
           <div 
             onClick={() => onOpenAddStock()}
-            className="rounded-3xl p-6 flex flex-col justify-between shadow-sm cursor-pointer hover:shadow-md transition-all active:scale-98"
-            style={{ backgroundColor: '#AEE1FF' }}
+            className="rounded-3xl p-6 flex flex-col justify-between shadow-lg shadow-sky-500/20 cursor-pointer hover:shadow-xl transition-all active:scale-98 bg-gradient-to-br from-sky-400 via-sky-300 to-blue-400 text-slate-950 border-2 border-sky-300"
           >
             <div>
               <div className="flex items-center justify-between">
-                <span className="inline-block px-3 py-1 rounded-full bg-white/50 text-xs font-black text-slate-950">
+                <span className="inline-block px-3 py-1 rounded-full bg-slate-950 text-sky-300 text-xs font-black shadow-xs">
                   {language === 'hi' ? '+ आवक माल' : '+ Stock Inward'}
                 </span>
-                <span className="text-xs font-bold text-slate-900">
+                <span className="text-xs font-black text-slate-950">
                   Distributor
                 </span>
               </div>
@@ -364,7 +362,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {language === 'hi' ? 'माल आया (Add Stock)' : 'Add Stock'}
               </h4>
 
-              <p className="text-xs font-bold text-slate-900/80 mt-2 leading-relaxed">
+              <p className="text-xs font-extrabold text-slate-900 mt-2 leading-relaxed">
                 {language === 'hi' 
                   ? 'सप्लायर या थोक व्यापारी से आया नया माल इन्वेंट्री में जोड़ें।' 
                   : 'Receive incoming stock deliveries and update inventory immediately.'}
@@ -373,21 +371,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
             <div className="pt-6 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-2xl bg-sky-900 text-white flex items-center justify-center shadow-sm">
-                  <PackagePlus className="w-5 h-5 text-sky-200" />
+                <div className="w-10 h-10 rounded-2xl bg-slate-950 text-white flex items-center justify-center shadow-sm">
+                  <PackagePlus className="w-5 h-5 text-sky-300" />
                 </div>
                 <span className="text-xs font-black text-slate-950">
                   {language === 'hi' ? 'स्टॉक जोड़ें' : 'Receive Delivery'}
                 </span>
               </div>
-              <ArrowUpRight className="w-5 h-5 text-slate-950" />
+              <ArrowUpRight className="w-5 h-5 text-slate-950 stroke-[3]" />
             </div>
           </div>
 
-          {/* Action 3: Quick Tools & WhatsApp (Pastel Pink) */}
+          {/* Action 3: Quick Tools & WhatsApp (Pop Fuchsia-Pink Gradient) */}
           <div 
-            className="rounded-3xl p-6 flex flex-col justify-between shadow-sm"
-            style={{ backgroundColor: '#FF9FE5' }}
+            className="rounded-3xl p-6 flex flex-col justify-between shadow-lg shadow-pink-500/20 bg-gradient-to-br from-pink-400 via-rose-300 to-fuchsia-400 text-slate-950 border-2 border-pink-300"
           >
             <div>
               <div className="flex items-center justify-between">
