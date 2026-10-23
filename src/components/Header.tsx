@@ -72,11 +72,12 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="text-xl sm:text-2xl font-black text-white tracking-tight drop-shadow-xs whitespace-nowrap">
                     {language === 'hi' ? 'दुकान दोस्त' : 'Dukan Dost'}
                   </span>
-                  {profile?.storeCategory && (
-                    <span className="hidden sm:inline-flex flex-shrink-0 items-center px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-xs">
-                      {profile.storeCategory.split('/')[0].trim()}
-                    </span>
-                  )}
+                  {/* Kirana / category badge — always visible, right next to brand name */}
+                  <span className="inline-flex flex-shrink-0 items-center px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 text-[10px] font-black uppercase tracking-wider shadow-xs">
+                    {profile?.storeCategory
+                      ? profile.storeCategory.split('/')[0].trim()
+                      : (language === 'hi' ? 'किराना' : 'Kirana')}
+                  </span>
                   {user ? (
                     <span className="hidden xl:inline-flex flex-shrink-0 items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/30 border border-emerald-400/50 text-emerald-300 text-[10px] font-black">
                       <Cloud className="w-2.5 h-2.5" />
@@ -89,11 +90,6 @@ export const Header: React.FC<HeaderProps> = ({
                     </span>
                   )}
                 </div>
-
-                <p className="text-xs font-semibold text-amber-200/90 mt-0.5 truncate max-w-[160px] sm:max-w-[220px]">
-                  <span className="text-white font-extrabold">{storeName}</span>
-                  {profile?.shopkeeperName ? ` • ${profile.shopkeeperName}` : ''} • {todayDateStr}
-                </p>
               </div>
             </button>
           </div>

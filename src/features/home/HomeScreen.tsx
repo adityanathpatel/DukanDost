@@ -45,18 +45,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenVoice,
 }) => {
   const { storeName } = useAuth();
-  const [selectedDayIndex, setSelectedDayIndex] = useState<number>(3);
+  const [selectedDayIndex, setSelectedDayIndex] = useState<number>(-1); // -1 = will default to today
   const [copiedWhatsAppToast, setCopiedWhatsAppToast] = useState(false);
 
-  const daysOfWeek = [
-    { day: 'Sun', date: 18, isToday: false },
-    { day: 'Mon', date: 19, isToday: false },
-    { day: 'Tue', date: 20, isToday: false },
-    { day: 'Wed', date: 21, isToday: true },
-    { day: 'Thu', date: 22, isToday: false },
-    { day: 'Fri', date: 23, isToday: false },
-    { day: 'Sat', date: 24, isToday: false },
-  ];
+  // Dynamically build the current week's 7-day strip (Mon–Sun or Sun–Sat centred on today)
+  const todayReal = new Date();
+  const todayDayOfWeek = todayReal.getDay(); // 0 = Sun
+  const shortDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const daysOfWeek = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(todayReal);
+    d.setDate(todayReal.getDate() - todayDayOfWeek + i);
+    return {
+      day: shortDays[d.getDay()],
+      date: d.getDate(),
+      isToday: d.toDateString() === todayReal.toDateString(),
+    };
+  });
+  const todayWeekIndex = daysOfWeek.findIndex((d) => d.isToday);
 
   // Stock status counts
   const outOfStockCount = products.filter(
@@ -273,7 +278,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               {language === 'hi' ? 'पर्याप्त स्टॉक (Adequate)' : 'Adequate Stock'}
             </div>
             <div className="text-xs text-slate-500 font-medium mt-0.5">
-              {language === 'hi' ? 'संतोषजनक स्थिति में' : 'Healthy inventory levels'}
+              {new Intl.DateTimeFormat(language === 'hi' ? 'hi-IN' : 'en-IN', {
+                weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+              }).format(new Date())}
             </div>
           </div>
         </div>
