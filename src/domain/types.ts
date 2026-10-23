@@ -9,6 +9,8 @@ export type StoreCategory =
   | 'Apparel / Garments'
   | 'General Store';
 
+export type VoiceLanguage = 'hi' | 'hinglish' | 'en';
+
 export interface ShopkeeperProfile {
   shopkeeperName: string;
   storeName: string;
@@ -16,8 +18,13 @@ export interface ShopkeeperProfile {
   storeAddress: string;
   pincode: string;
   phone: string;
+  quickPin?: string; // 4-digit quick PIN for day-to-day frictionless shop access
+  whatsAppBusinessNumber?: string;
   gstin?: string;
   email?: string;
+  voiceLanguagePreference?: VoiceLanguage;
+  isProfileComplete?: boolean;
+  lastBackupAt?: number;
   createdAt?: number;
 }
 
@@ -28,8 +35,12 @@ export const DEFAULT_SHOPKEEPER_PROFILE: ShopkeeperProfile = {
   storeAddress: 'मेन मार्केट, चौक चौराहा',
   pincode: '226001',
   phone: '9876543210',
+  quickPin: '1234',
+  whatsAppBusinessNumber: '9876543210',
   gstin: '09AAAAA0000A1Z5',
   email: 'sharma.kirana@dukandost.in',
+  voiceLanguagePreference: 'hinglish',
+  isProfileComplete: true,
   createdAt: 1729700000000,
 };
 
