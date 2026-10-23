@@ -72,7 +72,7 @@ Ensure you have the following installed:
 ### 2. Clone the Repository
 
 ```bash
-git clone https://github.com/adityanathpatel/DukanDost.git
+git clone [https://github.com/saumy-chaurasia/Meri-Dukan]
 cd DukanDost
 ```
 
